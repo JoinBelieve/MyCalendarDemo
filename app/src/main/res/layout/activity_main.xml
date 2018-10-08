@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    tools:ignore="RtlHardcoded,HardcodedText,RtlSymmetry,SmallSp">
+
+
+    <com.haibin.calendarview.CalendarView
+        android:id="@+id/mCalendarView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:min_year="2017"
+        app:month_view="com.dan.mycalendardemo.weight.CustomRangeMonthView"
+        app:month_view_show_mode="mode_only_current"
+        app:other_month_text_color="#acacac"
+        app:scheme_theme_color="#ee7621"
+        app:select_mode="range_mode"
+        app:selected_text_color="#ffffff"
+        app:selected_theme_color="#ee7621"
+        app:week_view="com.dan.mycalendardemo.weight.CustomRangeWeekView" />
+
+    <Button
+        android:id="@+id/mClearBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:text="清除" />
+</LinearLayout>
