@@ -106,9 +106,10 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
         orderSumMap?.let {
             if (orderSumMap!!.containsKey(calendar.toString())) {
                 calendar.scheme = "无房"
+            } else {
+                calendar.scheme = text
             }
         }
-        calendar.scheme = text
         calendar.addScheme(Calendar.Scheme())
         return calendar
     }
