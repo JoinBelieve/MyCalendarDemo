@@ -111,11 +111,6 @@ class CustomRangeMonthView(context: Context) : RangeMonthView(context) {
             canvas.drawRect(x.toFloat(), (cy - mRadius).toFloat(), (x + mItemWidth).toFloat(), (cy + mRadius).toFloat(), mSelectedPaint)
             //            canvas.drawCircle(cx, cy, mRadius, mSelectedPaint);
         }
-
-        if (isEnable) {
-            canvas.drawRect(x.toFloat(), (cy - mRadius).toFloat(), (x + mItemWidth).toFloat(), (cy + mRadius).toFloat(), mSelectedPaint)
-        }
-
         return false
     }
 

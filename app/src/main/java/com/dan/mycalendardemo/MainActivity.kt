@@ -50,21 +50,23 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
 
         //预定信息
         orderSummart = OrderSummart(mutableListOf("20181030", "20181025", "20181024"))
-//        orderSummart = OrderSummart(mutableListOf(""))
+//        orderSummart = OrderSummart(mutableListOf())
 
+        if (orderSummart!!.orderSummary.isNotEmpty()) {
+            mBuyDays = mutableListOf()
+            orderSummart!!.orderSummary.forEach {
+                val cal = Calendar()
+                cal.year = it.substring(0..3).toInt()
+                cal.month = it.substring(4..5).toInt()
+                cal.day = it.substring(6..7).toInt()
+                mBuyDays!!.add(cal)
+            }
 
-        mBuyDays = mutableListOf()
-        orderSummart!!.orderSummary.forEach {
-            val cal = Calendar()
-            cal.year = it.substring(0..3).toInt()
-            cal.month = it.substring(4..5).toInt()
-            cal.day = it.substring(6..7).toInt()
-            mBuyDays!!.add(cal)
-        }
+            orderSumMap = hashMapOf()
+            orderSummart!!.orderSummary.forEach {
+                orderSumMap!![it] = "已租"
+            }
 
-        orderSumMap = hashMapOf()
-        orderSummart!!.orderSummary.forEach {
-            orderSumMap!![it] = "已租"
         }
 
 
@@ -101,11 +103,12 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
         calendar.month = month
         calendar.day = day
 //        calendar.schemeColor = color//如果单独标记颜色、则会使用这个颜色
-        if (orderSumMap!!.containsKey(calendar.toString())) {
-            calendar.scheme = "无房"
-        } else {
-            calendar.scheme = text
+        orderSumMap?.let {
+            if (orderSumMap!!.containsKey(calendar.toString())) {
+                calendar.scheme = "无房"
+            }
         }
+        calendar.scheme = text
         calendar.addScheme(Calendar.Scheme())
         return calendar
     }
@@ -120,27 +123,30 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
     }
 
     private fun setInterceptData(calendar: Calendar): Boolean {
-        if (orderSumMap!!.containsKey(start.toString())) {
-           clearSelectDate()
-        }
-        if (start != null && end == null) {
-            if (getNearestDay(start!!) != null) {
-                if (calendar >= getNearestDay(start!!)) {
-                    return calendar > getNearestDay(start!!)
+        orderSumMap?.let {
+            if (orderSumMap!!.containsKey(start.toString())) {
+                clearSelectDate()
+            }
+            if (start != null && end == null) {
+                if (getNearestDay(start!!) != null) {
+                    if (calendar >= getNearestDay(start!!)) {
+                        return calendar > getNearestDay(start!!)
+                    }
                 }
             }
-        }
-        if (end != null) {
-            if (orderSumMap!!.containsKey(end.toString())) {
-                if (calendar >= getNearestDay(start!!)) {
-                    return calendar > getNearestDay(start!!)
+            if (end != null) {
+                if (orderSumMap!!.containsKey(end.toString())) {
+                    if (calendar >= getNearestDay(start!!)) {
+                        return calendar > getNearestDay(start!!)
+                    }
                 }
             }
+            return orderSumMap == null || orderSumMap?.size == 0 || orderSumMap?.containsKey(calendar.toString())!!
         }
-        return orderSumMap == null || orderSumMap?.size == 0 || orderSumMap?.containsKey(calendar.toString())!!
+        return false
     }
 
-    private fun clearSelectDate(){
+    private fun clearSelectDate() {
         start = null
         end = null
         mCalendarView.clearSelectRange()
