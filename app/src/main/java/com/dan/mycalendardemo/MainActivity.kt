@@ -1,11 +1,9 @@
 package com.dan.mycalendardemo
 
-import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.blankj.utilcode.util.TimeUtils
 import com.dan.mycalendardemo.entry.HouseInfo
 import com.dan.mycalendardemo.entry.OrderSummart
 import com.dan.mycalendardemo.entry.Special
@@ -13,8 +11,6 @@ import com.dan.mycalendardemo.utils.DateUtil
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -29,6 +25,8 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
     private var start: Calendar? = null
 
     private var orderSumMap: HashMap<String, Any>? = null
+
+    private var mBuyDays: MutableList<Calendar>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +52,16 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
 
         //预定信息
         orderSummart = OrderSummart(mutableListOf("20181030", "20181025", "20181024"))
+
+
+        mBuyDays = mutableListOf()
+        orderSummart!!.orderSummary.forEach {
+            val cal = Calendar()
+            cal.year = it.substring(0..3).toInt()
+            cal.month = it.substring(4..5).toInt()
+            cal.day = it.substring(6..7).toInt()
+            mBuyDays!!.add(cal)
+        }
 
         orderSumMap = hashMapOf()
         orderSummart!!.orderSummary.forEach {
@@ -105,42 +113,35 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
     }
 
     override fun onCalendarIntercept(calendar: Calendar): Boolean {
-        //判断是否在日期范围之内
-//        if (DateUtil.isCalendarInRange(calendar, mCalendarView.minRangeCalendar.year,
-//                        mCalendarView.minRangeCalendar.month, mCalendarView.minRangeCalendar.day,
-//                        mCalendarView.maxRangeCalendar.year, mCalendarView.maxRangeCalendar.month, mCalendarView.maxRangeCalendar.day)) {
-//            val year = calendar.year
-//            val month = calendar.month
-//            val day = calendar.day
-////        mCalendarView.minRangeCalendar
-//            if (start == null) {
-//                return orderSummart?.orderSummary?.any {
-//                    year == it.substring(0..3).toInt() &&
-//                            month == it.substring(4..5).toInt() &&
-//                            day == it.substring(6..7).toInt()
-//                } ?: false
-//            } else {
-//                val sYear = start!!.year
-//                val sMonth = start!!.month
-//                val sDay = start!!.day
-//                val startCalendar = java.util.Calendar.getInstance()
-//                startCalendar.set(java.util.Calendar.YEAR, sYear)
-//                startCalendar.set(java.util.Calendar.MONTH, sMonth)
-//                startCalendar.set(java.util.Calendar.DAY_OF_MONTH, sDay)
-//
-//                val allCalendar = java.util.Calendar.getInstance()
-//                allCalendar.set(java.util.Calendar.YEAR, year)
-//                allCalendar.set(java.util.Calendar.MONTH, month)
-//                allCalendar.set(java.util.Calendar.DAY_OF_MONTH, day)
-//
-//                if (startCalendar.timeInMillis > allCalendar.timeInMillis) {
-//                    Log.e("TAG", "比入住之前的日期 $year-$month-$day")
-//                } else if (startCalendar.timeInMillis < allCalendar.timeInMillis) {
-//                    Log.e("TAG", "比入住之后的日期 $year-$month-$day")
-//                }
-//            }
-//        }
+        return setInterceptData(calendar)
+    }
+
+    private fun setInterceptData(calendar: Calendar): Boolean {
+        if (start != null) {
+            if (getNearestDay(start!!) != null) {
+                if (calendar >= getNearestDay(start!!)) {
+                    Log.e("拦截器", "${getNearestDay(start!!)}")
+                    return calendar > getNearestDay(start!!)
+                }
+            }
+        }
         return orderSumMap == null || orderSumMap?.size == 0 || orderSumMap?.containsKey(calendar.toString())!!
+    }
+
+    /**
+    找离入住日期最近的已租日期
+     *  @param
+     */
+    private fun getNearestDay(calendar: Calendar): Calendar? {
+        val list = mutableListOf<Calendar>()
+        list.addAll(mBuyDays!!)
+        list.sortBy { it.timeInMillis }
+        for (day in list) {
+            if (calendar < day) {
+                return day
+            }
+        }
+        return null
     }
 
     override fun onCalendarSelectOutOfRange(calendar: Calendar) {
