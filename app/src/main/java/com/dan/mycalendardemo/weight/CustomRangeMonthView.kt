@@ -18,8 +18,6 @@ class CustomRangeMonthView(context: Context) : RangeMonthView(context) {
 
     private var mRadius: Int = 0
     private val mH: Int
-    //    是否显示价格
-    private var isShowPrice = false
 
     /**
      * 不可用画笔
@@ -52,12 +50,18 @@ class CustomRangeMonthView(context: Context) : RangeMonthView(context) {
 
     init {
 
+        mOtherMonthTextPaint.isFakeBoldText = false
+        mOtherMonthTextPaint.color = -0x77606061
 
-        mDisablePaint.color = -0x606061
+        mCurMonthTextPaint.isFakeBoldText = false
+
+        mSelectTextPaint.isFakeBoldText = false
+
+        mDisablePaint.color = -0x77606061
         mDisablePaint.isAntiAlias = true
-        mDisablePaint.strokeWidth = dipToPx(context, 2f).toFloat()
+        mDisablePaint.strokeWidth = dipToPx(context, 1.5f).toFloat()
         mDisablePaint.isFakeBoldText = false
-        mH = dipToPx(context, 18f)
+        mH = dipToPx(context, 16f)
 
         mCurPriceTextPaint.color = -0x1189df
         mCurPriceTextPaint.isAntiAlias = true
@@ -136,10 +140,8 @@ class CustomRangeMonthView(context: Context) : RangeMonthView(context) {
 
 
         if (!isInRange) {
-            isShowPrice = false
-            canvas.drawLine((x + mH).toFloat(), (y + mH).toFloat(), (x + mItemWidth - mH).toFloat(), (y + mItemHeight - mH).toFloat(), mDisablePaint)
-        } else {
-            isShowPrice = true
+//            canvas.drawLine((x + mH).toFloat(), (y + mH).toFloat(), (x + mItemWidth - mH).toFloat(), (y + mItemHeight - mH).toFloat(), mDisablePaint)
+            canvas.drawLine((x + mItemWidth - mH).toFloat(), (y + mH).toFloat(), (x + mH).toFloat(), (y + mItemHeight - mH).toFloat(), mDisablePaint)
         }
 
         if (isSelected) {
@@ -180,12 +182,17 @@ class CustomRangeMonthView(context: Context) : RangeMonthView(context) {
                         mSelectPriceTextPaint)
             }
         } else if (hasScheme) {
-            canvas.drawText(if (calendar.isCurrentDay) "今" else calendar.day.toString(), cx.toFloat(), mTextBaseLine + top,
-                    if (calendar.isCurrentDay)
-                        mCurDayTextPaint
-                    else if (calendar.isCurrentMonth && isInRange && isEnable) mCurMonthTextPaint else mOtherMonthTextPaint)
-            canvas.drawText(if (calendar.scheme.toString() != "无房") "￥" + calendar.scheme.toString() else "无房", cx.toFloat(), mTextBaseLine + y.toFloat() + (mItemHeight / 10).toFloat(),
-                    if (calendar.isCurrentMonth && isInRange && isEnable) mCurPriceTextPaint else mRatedPaint)
+            if (isInRange) {
+                canvas.drawText(if (calendar.isCurrentDay) "今" else calendar.day.toString(), cx.toFloat(), mTextBaseLine + top,
+                        if (calendar.isCurrentDay)
+                            mCurDayTextPaint
+                        else if (calendar.isCurrentMonth && isInRange && isEnable) mCurMonthTextPaint else mOtherMonthTextPaint)
+                canvas.drawText(if (calendar.scheme.toString() != "无房") "￥" + calendar.scheme.toString() else "无房", cx.toFloat(), mTextBaseLine + y.toFloat() + (mItemHeight / 10).toFloat(),
+                        if (calendar.isCurrentMonth && isInRange && isEnable) mCurPriceTextPaint else mRatedPaint)
+            } else {
+                canvas.drawText(if (calendar.isCurrentDay) "今" else calendar.day.toString(), cx.toFloat(), baselineY,
+                        if (calendar.isCurrentDay) mCurDayTextPaint else mOtherMonthTextPaint)
+            }
         } else {
             if (calendar.isCurrentDay) {
                 canvas.drawCircle(cx.toFloat(), cy.toFloat(), mRadius.toFloat(), mSchemePaint)

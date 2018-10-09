@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
                 , Special("20181011", 2000), Special("20181012", 2500)))
 
         //预定信息
-        orderSummart = OrderSummart(mutableListOf("20181030", "20181025", "20181024"))
+        orderSummart = OrderSummart(mutableListOf("20181030", "20181025", "20181024","20181124"))
 //        orderSummart = OrderSummart(mutableListOf())
 
         if (orderSummart!!.orderSummary.isNotEmpty()) {
