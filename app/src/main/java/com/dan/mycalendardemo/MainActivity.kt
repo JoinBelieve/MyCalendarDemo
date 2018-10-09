@@ -3,7 +3,6 @@ package com.dan.mycalendardemo
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import com.dan.mycalendardemo.entry.HouseInfo
 import com.dan.mycalendardemo.entry.OrderSummart
 import com.dan.mycalendardemo.entry.Special
@@ -11,7 +10,6 @@ import com.dan.mycalendardemo.utils.DateUtil
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
 import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListener
@@ -23,6 +21,7 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
     private var orderSummart: OrderSummart? = null
 
     private var start: Calendar? = null
+    private var end: Calendar? = null
 
     private var orderSumMap: HashMap<String, Any>? = null
 
@@ -41,8 +40,7 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
         mCalendarView.setOnCalendarRangeSelectListener(this)
 
         mClearBtn.setOnClickListener {
-            start = null
-            mCalendarView.clearSelectRange()
+            clearSelectDate()
         }
     }
 
@@ -52,6 +50,7 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
 
         //预定信息
         orderSummart = OrderSummart(mutableListOf("20181030", "20181025", "20181024"))
+//        orderSummart = OrderSummart(mutableListOf(""))
 
 
         mBuyDays = mutableListOf()
@@ -102,14 +101,18 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
         calendar.month = month
         calendar.day = day
 //        calendar.schemeColor = color//如果单独标记颜色、则会使用这个颜色
-        calendar.scheme = text
+        if (orderSumMap!!.containsKey(calendar.toString())) {
+            calendar.scheme = "无房"
+        } else {
+            calendar.scheme = text
+        }
         calendar.addScheme(Calendar.Scheme())
         return calendar
     }
 
     //拦截
     override fun onCalendarInterceptClick(calendar: Calendar, isClick: Boolean) {
-        Toast.makeText(this, "这天已经租出去啦", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, "这天已经租出去啦", Toast.LENGTH_SHORT).show()
     }
 
     override fun onCalendarIntercept(calendar: Calendar): Boolean {
@@ -117,15 +120,30 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
     }
 
     private fun setInterceptData(calendar: Calendar): Boolean {
-        if (start != null) {
+        if (orderSumMap!!.containsKey(start.toString())) {
+           clearSelectDate()
+        }
+        if (start != null && end == null) {
             if (getNearestDay(start!!) != null) {
                 if (calendar >= getNearestDay(start!!)) {
-                    Log.e("拦截器", "${getNearestDay(start!!)}")
+                    return calendar > getNearestDay(start!!)
+                }
+            }
+        }
+        if (end != null) {
+            if (orderSumMap!!.containsKey(end.toString())) {
+                if (calendar >= getNearestDay(start!!)) {
                     return calendar > getNearestDay(start!!)
                 }
             }
         }
         return orderSumMap == null || orderSumMap?.size == 0 || orderSumMap?.containsKey(calendar.toString())!!
+    }
+
+    private fun clearSelectDate(){
+        start = null
+        end = null
+        mCalendarView.clearSelectRange()
     }
 
     /**
@@ -149,8 +167,11 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
     }
 
     override fun onCalendarRangeSelect(calendar: Calendar, isEnd: Boolean) {
+        end = null
         if (isEnd.not()) {
             start = calendar
+        } else {
+            end = calendar
         }
         Log.e("TAG", "onCalendarRangeSelect : ${calendar.year}-${calendar.month}-${calendar.day} isEnd = $isEnd")
     }
