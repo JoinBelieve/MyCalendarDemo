@@ -35,7 +35,6 @@ dependencies {
     implementation 'com.haibin:calendarview:3.4.7'
     api 'com.blankj:utilcode:1.19.0'
 
-
     /*
                   anko配置
                */

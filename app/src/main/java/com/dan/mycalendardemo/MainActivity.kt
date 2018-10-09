@@ -10,6 +10,7 @@ import com.dan.mycalendardemo.utils.DateUtil
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.startActivity
 import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListener
@@ -41,6 +42,10 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
 
         mClearBtn.setOnClickListener {
             clearSelectDate()
+        }
+
+        mToSelectCalBtn.setOnClickListener {
+            startActivity<CaldenlarActivity>()
         }
     }
 
