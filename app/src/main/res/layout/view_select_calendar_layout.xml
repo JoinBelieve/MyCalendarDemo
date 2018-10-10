@@ -16,6 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/mTitleDateTv"
             android:src="@drawable/ic_chevron_left_black_24dp" />
 
         <TextView
@@ -29,8 +30,8 @@
             android:id="@+id/mRightIconTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/mTitleDateTv"
             android:src="@drawable/ic_chevron_right_black_24dp" />
     </RelativeLayout>
 
@@ -38,8 +39,8 @@
         android:id="@+id/mCv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_gravity="center"
         android:layout_weight="1"
-        app:min_year="2017"
         app:month_view="com.dan.mycalendardemo.weight.CustomRangeMonthView"
         app:month_view_show_mode="mode_only_current"
         app:other_month_text_color="#acacac"

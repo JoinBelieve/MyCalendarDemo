@@ -99,7 +99,6 @@ class SelectCalendarView @JvmOverloads constructor(
      * 设置日历控件的高度
      */
     fun setCalendarHeight() {
-        mCalendarView
     }
 
     /**
@@ -220,7 +219,7 @@ class SelectCalendarView @JvmOverloads constructor(
             if (end != null) {
                 if (orderSumMap!!.containsKey(end.toString())) {
                     if (calendar >= end) {
-                        val map = orderSumMap!!.filterNot { it.key == end.toString() }
+                        val map = orderSumMap!!.filterNot { res -> res.key == end.toString() }
                         return map.isEmpty() || map.containsKey(calendar.toString())
                     }
 //                    if (calendar >= getNearestDay(start!!)) {

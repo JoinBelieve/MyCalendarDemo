@@ -21,8 +21,8 @@ class CaldenlarActivity : AppCompatActivity(), SelectCalendarView.OnCalendarRang
 
     private fun initView() {
         mCalendarView.setRange(mCalendarView.getCurYear(), 12, 20)
-        mCalendarView.setPrices(HouseInfo(listOf(100, 100, 200, 300, 400, 500, 600), listOf(Special("20181010", 300)
-                , Special("20181011", 2000), Special("20181012", 2500))), OrderSummart(mutableListOf("20181030","20181112","20181012")))
+//        mCalendarView.setPrices(HouseInfo(listOf(100, 100, 200, 300, 400, 500, 600), listOf(Special("20181010", 300)
+//                , Special("20181011", 2000), Special("20181012", 2500))), OrderSummart(mutableListOf("20181030","20181112","20181012")))
         mCalendarView.setCalendarRangeSelectListener(this)
     }
 
