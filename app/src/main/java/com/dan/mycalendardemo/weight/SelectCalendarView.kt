@@ -26,6 +26,9 @@ class SelectCalendarView @JvmOverloads constructor(
     private var start: Calendar? = null
     private var end: Calendar? = null
 
+    private var listener: OnCalendarRangeSelectListener? = null
+
+
     init {
         initView()
     }
@@ -187,7 +190,7 @@ class SelectCalendarView @JvmOverloads constructor(
     /**
      * 清除选择日期
      */
-    private fun clearSelectDate() {
+    fun clearSelectDate() {
         start = null
         end = null
         mCalendarView.clearSelectRange()
@@ -216,9 +219,13 @@ class SelectCalendarView @JvmOverloads constructor(
             }
             if (end != null) {
                 if (orderSumMap!!.containsKey(end.toString())) {
-                    if (calendar >= getNearestDay(start!!)) {
-                        return calendar > getNearestDay(start!!)
+                    if (calendar >= end) {
+                        val map = orderSumMap!!.filterNot { it.key == end.toString() }
+                        return map.isEmpty() || map.containsKey(calendar.toString())
                     }
+//                    if (calendar >= getNearestDay(start!!)) {
+//                        return calendar > getNearestDay(start!!)
+//                    }
                 }
             }
             return orderSumMap == null || orderSumMap?.size == 0 || orderSumMap?.containsKey(calendar.toString())!!
@@ -233,7 +240,19 @@ class SelectCalendarView @JvmOverloads constructor(
         } else {
             end = calendar
         }
+        listener?.let {
+            listener!!.setRangeSelectListener(calendar, isEnd)
+        }
     }
+
+    interface OnCalendarRangeSelectListener {
+        fun setRangeSelectListener(calendar: Calendar?, isEnd: Boolean)
+    }
+
+    fun setCalendarRangeSelectListener(listener: OnCalendarRangeSelectListener) {
+        this.listener = listener
+    }
+
 
     override fun onCalendarInterceptClick(calendar: Calendar?, isClick: Boolean) {}
     override fun onCalendarSelectOutOfRange(calendar: Calendar?) {}
