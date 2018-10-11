@@ -35,19 +35,19 @@
             android:src="@drawable/ic_chevron_right_black_24dp" />
     </RelativeLayout>
 
-    <!--<com.haibin.calendarview.CalendarView-->
-        <!--android:id="@+id/mCv"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:layout_weight="1"-->
-        <!--app:month_view="com.dan.mycalendardemo.weight.CustomRangeMonthView"-->
-        <!--app:month_view_show_mode="mode_only_current"-->
-        <!--app:other_month_text_color="#acacac"-->
-        <!--app:scheme_theme_color="#ee7621"-->
-        <!--app:select_mode="range_mode"-->
-        <!--app:selected_text_color="#ffffff"-->
-        <!--app:selected_theme_color="#ee7621"-->
-        <!--app:week_view="com.dan.mycalendardemo.weight.CustomRangeWeekView" />-->
+    <com.haibin.calendarview.CalendarView
+        android:id="@+id/mCv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        app:month_view="com.dan.mycalendardemo.weight.CustomRangeMonthView"
+        app:month_view_show_mode="mode_only_current"
+        app:other_month_text_color="#acacac"
+        app:scheme_theme_color="#ee7621"
+        app:select_mode="range_mode"
+        app:selected_text_color="#ffffff"
+        app:selected_theme_color="#ee7621"
+        app:week_view="com.dan.mycalendardemo.weight.CustomRangeWeekView" />
 
 </LinearLayout>

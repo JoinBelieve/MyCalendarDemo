@@ -33,12 +33,12 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
         setContentView(R.layout.activity_main)
 
 //
-//        mCalendarView.setRange(mCalendarView.curYear, mCalendarView.curMonth, mCalendarView.curDay,
-//                mCalendarView.curYear, 12, 31)
-//        loadData()
-//
-//        mCalendarView.setOnCalendarInterceptListener(this)
-//        mCalendarView.setOnCalendarRangeSelectListener(this)
+        mCalendarView.setRange(mCalendarView.curYear, mCalendarView.curMonth, mCalendarView.curDay,
+                mCalendarView.curYear, 12, 31)
+        loadData()
+
+        mCalendarView.setOnCalendarInterceptListener(this)
+        mCalendarView.setOnCalendarRangeSelectListener(this)
 
         mClearBtn.setOnClickListener {
             clearSelectDate()
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
                 , Special("20181011", 2000), Special("20181012", 2500)))
 
         //预定信息
-        orderSummart = OrderSummart(mutableListOf("20181030", "20181025", "20181024","20181124"))
+        orderSummart = OrderSummart(mutableListOf("20181030", "20181025", "20181024", "20181124"))
 //        orderSummart = OrderSummart(mutableListOf())
 
         if (orderSummart!!.orderSummary.isNotEmpty()) {
@@ -76,30 +76,30 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
 
 
         val map = HashMap<String, Calendar>()
-//        val maxYear = mCalendarView.maxRangeCalendar.year
-//        val maxMonth = mCalendarView.maxRangeCalendar.month
-//        val maxDay = mCalendarView.maxRangeCalendar.day
-//        val minYear = mCalendarView.minRangeCalendar.year
-//        val minMonth = mCalendarView.minRangeCalendar.month
-//        val minDay = mCalendarView.minRangeCalendar.day
+        val maxYear = mCalendarView.maxRangeCalendar.year
+        val maxMonth = mCalendarView.maxRangeCalendar.month
+        val maxDay = mCalendarView.maxRangeCalendar.day
+        val minYear = mCalendarView.minRangeCalendar.year
+        val minMonth = mCalendarView.minRangeCalendar.month
+        val minDay = mCalendarView.minRangeCalendar.day
 
-        //遍历年月日
-//        for (year in minYear..maxYear) {
-//            for (month in minMonth..maxMonth) {
-//                if (month == minMonth) {
-//                    for (day in minDay..maxDay) {
-//                        map[getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo!!)).toString()] =
-//                                getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo!!))
-//                    }
-//                } else {
-//                    for (day in 1..DateUtil.getMonthDaysCount(year, month)) {
-//                        map[getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo!!)).toString()] =
-//                                getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo!!))
-//                    }
-//                }
-//            }
-//        }
-//        mCalendarView.setSchemeDate(map)
+//        遍历年月日
+        for (year in minYear..maxYear) {
+            for (month in minMonth..maxMonth) {
+                if (month == minMonth) {
+                    for (day in minDay..maxDay) {
+                        map[getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo!!)).toString()] =
+                                getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo!!))
+                    }
+                } else {
+                    for (day in 1..DateUtil.getMonthDaysCount(year, month)) {
+                        map[getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo!!)).toString()] =
+                                getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo!!))
+                    }
+                }
+            }
+        }
+        mCalendarView.setSchemeDate(map)
     }
 
     private fun getSchemeCalendar(year: Int, month: Int, day: Int, text: String): Calendar {
@@ -130,24 +130,27 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
 
     private fun setInterceptData(calendar: Calendar): Boolean {
         orderSumMap?.let {
-            if (orderSumMap!!.containsKey(start.toString())) {
-                clearSelectDate()
-            }
-            if (start != null && end == null) {
-                if (getNearestDay(start!!) != null) {
-                    if (calendar >= getNearestDay(start!!)) {
-                        return calendar > getNearestDay(start!!)
+            if (orderSumMap!!.size > 0) {
+                if (orderSumMap!!.containsKey(start.toString())) {
+                    clearSelectDate()
+                }
+                if (start != null && end == null) {
+                    if (getNearestDay(start!!) != null) {
+                        if (calendar >= getNearestDay(start!!)) {
+                            return calendar > getNearestDay(start!!)
+                        }
                     }
                 }
-            }
-            if (end != null) {
-                if (orderSumMap!!.containsKey(end.toString())) {
-                    if (calendar >= getNearestDay(start!!)) {
-                        return calendar > getNearestDay(start!!)
+                if (end != null) {
+                    if (orderSumMap!!.containsKey(end.toString())) {
+                        if (calendar >= end) {
+                            val map = orderSumMap!!.filterNot { res -> res.key == end.toString() }
+                            return map.isEmpty() || map.containsKey(calendar.toString())
+                        }
                     }
                 }
+                return orderSumMap?.containsKey(calendar.toString())!!
             }
-            return orderSumMap == null || orderSumMap?.size == 0 || orderSumMap?.containsKey(calendar.toString())!!
         }
         return false
     }
@@ -155,7 +158,7 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
     private fun clearSelectDate() {
         start = null
         end = null
-//        mCalendarView.clearSelectRange()
+        mCalendarView.clearSelectRange()
     }
 
     /**

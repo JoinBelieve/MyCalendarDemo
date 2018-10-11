@@ -35,7 +35,24 @@ class CaldenlarActivity : AppCompatActivity(), SelectCalendarView.OnCalendarRang
         }
 
         mSelectBtn.setOnClickListener {
+            val startTime = java.util.Calendar.getInstance()
+            startTime.set(java.util.Calendar.YEAR, 2018)
+            startTime.set(java.util.Calendar.MONTH, 10)
+            startTime.set(java.util.Calendar.DAY_OF_MONTH, 20)
+            val endTime = java.util.Calendar.getInstance()
+            endTime.set(java.util.Calendar.YEAR, 2018)
+            endTime.set(java.util.Calendar.MONTH, 10)
+            endTime.set(java.util.Calendar.DAY_OF_MONTH, 25)
+            var start = Calendar()
+            start.year = startTime.get(java.util.Calendar.YEAR)
+            start.month = startTime.get(java.util.Calendar.MONTH)
+            start.day = startTime.get(java.util.Calendar.DAY_OF_MONTH)
+            var end = Calendar()
+            end.year = endTime.get(java.util.Calendar.YEAR)
+            end.month = endTime.get(java.util.Calendar.MONTH)
+            end.day = endTime.get(java.util.Calendar.DAY_OF_MONTH)
 
+            mCalendarView.setSelectCalendarRange(start, end)
         }
     }
 

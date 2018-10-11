@@ -76,6 +76,12 @@ class SelectCalendarView @JvmOverloads constructor(
                 maxYear, maxMonth, maxDay)
     }
 
+    /**
+     * 设置选择日期范围
+     */
+    fun setSelectCalendarRange(start: Calendar, end: Calendar) {
+        mCalendarView.setSelectCalendarRange(start, end)
+    }
 
     /**
      * 获取当前年份
