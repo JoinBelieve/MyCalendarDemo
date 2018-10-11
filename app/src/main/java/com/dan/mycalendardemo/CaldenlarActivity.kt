@@ -9,6 +9,7 @@ import com.dan.mycalendardemo.entry.Special
 import com.dan.mycalendardemo.weight.SelectCalendarView
 import com.haibin.calendarview.Calendar
 import kotlinx.android.synthetic.main.activity_caldenlar.*
+import org.jetbrains.anko.toast
 
 class CaldenlarActivity : AppCompatActivity(), SelectCalendarView.OnCalendarRangeSelectListener {
 
@@ -24,6 +25,18 @@ class CaldenlarActivity : AppCompatActivity(), SelectCalendarView.OnCalendarRang
         mCalendarView.setPrices(HouseInfo(listOf(100, 100, 200, 300, 400, 500, 600), listOf(Special("20181010", 300)
                 , Special("20181011", 2000), Special("20181012", 2500))))
         mCalendarView.setCalendarRangeSelectListener(this)
+
+        mClearBtn.setOnClickListener {
+            mCalendarView.clearSelectDate()
+        }
+
+        mTotalBtn.setOnClickListener {
+            toast("${mCalendarView.getSelectDatePrice()}")
+        }
+
+        mSelectBtn.setOnClickListener {
+
+        }
     }
 
     override fun setRangeSelectListener(calendar: Calendar?, isEnd: Boolean) {

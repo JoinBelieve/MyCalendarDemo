@@ -1,13 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".CaldenlarActivity">
 
     <com.dan.mycalendardemo.weight.SelectCalendarView
         android:id="@+id/mCalendarView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</android.support.constraint.ConstraintLayout>
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <Button
+            android:id="@+id/mClearBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="清除" />
+
+        <Button
+            android:id="@+id/mTotalBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取总价" />
+
+        <Button
+            android:id="@+id/mSelectBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置选中" />
+
+        <Button
+            android:id="@+id/mPreviewBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="跳转预览" />
+    </LinearLayout>
+
+</LinearLayout>

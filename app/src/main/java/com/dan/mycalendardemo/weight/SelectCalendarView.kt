@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
+import com.blankj.utilcode.util.LogUtils
 import com.dan.mycalendardemo.R
 import com.dan.mycalendardemo.entry.HouseInfo
 import com.dan.mycalendardemo.entry.OrderSummart
@@ -11,6 +12,7 @@ import com.dan.mycalendardemo.utils.DateUtil
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 import kotlinx.android.synthetic.main.view_select_calendar_layout.view.*
+import java.util.*
 
 class SelectCalendarView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -22,6 +24,8 @@ class SelectCalendarView @JvmOverloads constructor(
     private lateinit var mCalendarView: CalendarView
     //存储预定信息
     private var orderSumMap: HashMap<String, Any>? = null
+    //存储每天的价格
+    private var sumMap: HashMap<String, Int>? = null
     private var mBuyDays: MutableList<Calendar>? = null
     private var start: Calendar? = null
     private var end: Calendar? = null
@@ -133,23 +137,60 @@ class SelectCalendarView @JvmOverloads constructor(
         val minMonth = mCalendarView.minRangeCalendar.month
         val minDay = mCalendarView.minRangeCalendar.day
 
-        //遍历年月日
-        for (year in minYear..maxYear) {
-            for (month in minMonth..maxMonth) {
-                if (month == minMonth) {
-                    for (day in minDay..DateUtil.getMonthDaysCount(year, month)) {
-                        map[getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo)).toString()] =
-                                getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo))
-                    }
-                } else {
-                    for (day in 1..DateUtil.getMonthDaysCount(year, month)) {
-                        map[getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo)).toString()] =
-                                getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo))
-                    }
-                }
-            }
+        val startTime = Calendar()
+        startTime.year = minYear
+        startTime.month = minMonth
+        startTime.day = minDay
+        val endTime = Calendar()
+        endTime.year = maxYear
+        endTime.month = maxMonth
+        endTime.day = maxDay
+
+        val days = arrayListOf<Calendar>()
+
+        val date1 = Date()
+        date1.time = startTime.timeInMillis
+        val date2 = Date()
+        date2.time = endTime.timeInMillis
+        //当前日期
+        val counter = java.util.Calendar.getInstance()
+        counter.time = date1
+        LogUtils.e("start ${counter.timeInMillis}")
+        val end = java.util.Calendar.getInstance()
+        end.time = date2
+        LogUtils.e("end  ${end.timeInMillis}")
+        while (counter.before(end) || counter == end) {
+            val calendar = Calendar()
+            calendar.year = counter.get(java.util.Calendar.YEAR)
+            calendar.month = counter.get(java.util.Calendar.MONTH) + 1
+            calendar.day = counter.get(java.util.Calendar.DAY_OF_MONTH)
+            days.add(calendar)
+            counter.add(java.util.Calendar.DATE, 1)
+        }
+        sumMap = hashMapOf()
+        for (day in days) {
+            map[getSchemeCalendar(day.year, day.month, day.day, DateUtil.getPrice(day.year, day.month, day.day, houseInfo)).toString()] =
+                    getSchemeCalendar(day.year, day.month, day.day, DateUtil.getPrice(day.year, day.month, day.day, houseInfo))
+            sumMap!!["${day.year}${day.month}${day.day}"] =
+                    DateUtil.getPrice(day.year, day.month, day.day, houseInfo).toInt()
         }
         mCalendarView.setSchemeDate(map)
+    }
+
+    /**
+     * 获取选中日期的价格 计算出总价
+     */
+    fun getSelectDatePrice(): Int {
+        var price = 0
+        LogUtils.e(mCalendarView.selectCalendarRange.toString())
+        sumMap?.let {
+            for (i in 0 until mCalendarView.selectCalendarRange.size - 1) {
+                price += sumMap!!["${mCalendarView.selectCalendarRange[i].year}" +
+                        "${mCalendarView.selectCalendarRange[i].month}" +
+                        "${mCalendarView.selectCalendarRange[i].day}"]!!
+            }
+        }
+        return price
     }
 
 
@@ -175,12 +216,14 @@ class SelectCalendarView @JvmOverloads constructor(
         calendar.month = month
         calendar.day = day
 //        calendar.schemeColor = color//如果单独标记颜色、则会使用这个颜色
-        orderSumMap?.let {
+        if (orderSumMap != null) {
             if (orderSumMap!!.containsKey(calendar.toString())) {
                 calendar.scheme = "无房"
             } else {
                 calendar.scheme = text
             }
+        } else {
+            calendar.scheme = text
         }
         calendar.addScheme(Calendar.Scheme())
         return calendar
@@ -206,28 +249,27 @@ class SelectCalendarView @JvmOverloads constructor(
 
     private fun setInterceptData(calendar: Calendar): Boolean {
         orderSumMap?.let {
-            if (orderSumMap!!.containsKey(start.toString())) {
-                clearSelectDate()
-            }
-            if (start != null && end == null) {
-                if (getNearestDay(start!!) != null) {
-                    if (calendar >= getNearestDay(start!!)) {
-                        return calendar > getNearestDay(start!!)
+            if (orderSumMap!!.size > 0) {
+                if (orderSumMap!!.containsKey(start.toString())) {
+                    clearSelectDate()
+                }
+                if (start != null && end == null) {
+                    if (getNearestDay(start!!) != null) {
+                        if (calendar >= getNearestDay(start!!)) {
+                            return calendar > getNearestDay(start!!)
+                        }
                     }
                 }
-            }
-            if (end != null) {
-                if (orderSumMap!!.containsKey(end.toString())) {
-                    if (calendar >= end) {
-                        val map = orderSumMap!!.filterNot { res -> res.key == end.toString() }
-                        return map.isEmpty() || map.containsKey(calendar.toString())
+                if (end != null) {
+                    if (orderSumMap!!.containsKey(end.toString())) {
+                        if (calendar >= end) {
+                            val map = orderSumMap!!.filterNot { res -> res.key == end.toString() }
+                            return map.isEmpty() || map.containsKey(calendar.toString())
+                        }
                     }
-//                    if (calendar >= getNearestDay(start!!)) {
-//                        return calendar > getNearestDay(start!!)
-//                    }
                 }
+                return orderSumMap?.containsKey(calendar.toString())!!
             }
-            return orderSumMap == null || orderSumMap?.size == 0 || orderSumMap?.containsKey(calendar.toString())!!
         }
         return false
     }
