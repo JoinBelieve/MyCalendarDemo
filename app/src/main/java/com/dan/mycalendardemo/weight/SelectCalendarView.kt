@@ -305,7 +305,11 @@ class SelectCalendarView @JvmOverloads constructor(
                     if (orderSumMap!!.containsKey(end.toString())) {
                         if (calendar >= end) {
                             val map = orderSumMap!!.filterNot { res -> res.key == end.toString() }
-                            return map.isEmpty() || map.containsKey(calendar.toString())
+                            if (map.isEmpty()) {
+                                return false
+                            } else {
+                                return map.isEmpty() || map.containsKey(calendar.toString())
+                            }
                         }
                     }
                 }

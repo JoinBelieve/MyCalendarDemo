@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
                 , Special("20181011", 2000), Special("20181012", 2500)))
 
         //预定信息
-        orderSummart = OrderSummart(mutableListOf("20181030", "20181025", "20181024", "20181124"))
+        orderSummart = OrderSummart(mutableListOf("20181030","20181031","20181108"))
 //        orderSummart = OrderSummart(mutableListOf())
 
         if (orderSummart!!.orderSummary.isNotEmpty()) {
@@ -174,7 +174,11 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
                     if (orderSumMap!!.containsKey(end.toString())) {
                         if (calendar >= end) {
                             val map = orderSumMap!!.filterNot { res -> res.key == end.toString() }
-                            return map.isEmpty() || map.containsKey(calendar.toString())
+                            if (map.isEmpty()) {
+                                return false
+                            } else {
+                                return map.isEmpty() || map.containsKey(calendar.toString())
+                            }
                         }
                     }
                 }
