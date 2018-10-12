@@ -4,11 +4,12 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.blankj.utilcode.util.LogUtils
 import com.dan.mycalendardemo.entry.HouseInfo
-import com.dan.mycalendardemo.entry.OrderSummart
 import com.dan.mycalendardemo.entry.Special
+import com.dan.mycalendardemo.weight.CustomRangeMonthView
 import com.dan.mycalendardemo.weight.SelectCalendarView
 import com.haibin.calendarview.Calendar
 import kotlinx.android.synthetic.main.activity_caldenlar.*
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
 class CaldenlarActivity : AppCompatActivity(), SelectCalendarView.OnCalendarRangeSelectListener {
@@ -21,17 +22,17 @@ class CaldenlarActivity : AppCompatActivity(), SelectCalendarView.OnCalendarRang
     }
 
     private fun initView() {
-        mCalendarView.setRange(mCalendarView.getCurYear(), 12, 20)
-        mCalendarView.setPrices(HouseInfo(listOf(100, 100, 200, 300, 400, 500, 600), listOf(Special("20181010", 300)
+        mSelectCV.setRange(mSelectCV.getCurYear(), 12, 20)
+        mSelectCV.setPrices(HouseInfo(listOf(100, 100, 200, 300, 400, 500, 600), listOf(Special("20181010", 300)
                 , Special("20181011", 2000), Special("20181012", 2500))))
-        mCalendarView.setCalendarRangeSelectListener(this)
+        mSelectCV.setCalendarRangeSelectListener(this)
 
         mClearBtn.setOnClickListener {
-            mCalendarView.clearSelectDate()
+            mSelectCV.clearSelectDate()
         }
 
         mTotalBtn.setOnClickListener {
-            toast("${mCalendarView.getSelectDatePrice()}")
+            toast("${mSelectCV.getSelectDatePrice()}")
         }
 
         mSelectBtn.setOnClickListener {
@@ -51,8 +52,11 @@ class CaldenlarActivity : AppCompatActivity(), SelectCalendarView.OnCalendarRang
             end.year = endTime.get(java.util.Calendar.YEAR)
             end.month = endTime.get(java.util.Calendar.MONTH)
             end.day = endTime.get(java.util.Calendar.DAY_OF_MONTH)
+            mSelectCV.setSelectCalendarRange(start, end)
+        }
 
-            mCalendarView.setSelectCalendarRange(start, end)
+        mPreviewBtn.setOnClickListener {
+            startActivity<PreviewCalendarActivity>()
         }
     }
 

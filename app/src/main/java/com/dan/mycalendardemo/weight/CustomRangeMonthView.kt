@@ -87,7 +87,6 @@ class CustomRangeMonthView(context: Context) : RangeMonthView(context) {
         mRatedPaint.textSize = dipToPx(context, 10f).toFloat()
 
 
-
     }
 
 

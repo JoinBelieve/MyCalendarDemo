@@ -8,9 +8,9 @@
     tools:context=".CaldenlarActivity">
 
     <com.dan.mycalendardemo.weight.SelectCalendarView
-        android:id="@+id/mCalendarView"
+        android:id="@+id/mSelectCV"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="1" />
 
     <LinearLayout

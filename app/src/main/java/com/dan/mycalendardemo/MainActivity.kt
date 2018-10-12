@@ -3,14 +3,17 @@ package com.dan.mycalendardemo
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.blankj.utilcode.util.LogUtils
 import com.dan.mycalendardemo.entry.HouseInfo
 import com.dan.mycalendardemo.entry.OrderSummart
 import com.dan.mycalendardemo.entry.Special
 import com.dan.mycalendardemo.utils.DateUtil
+import com.dan.mycalendardemo.weight.CustomRangeMonthView
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.startActivity
+import java.util.*
 import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListener
@@ -20,7 +23,8 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
     private var houseInfo: HouseInfo? = null
 
     private var orderSummart: OrderSummart? = null
-
+    //存储每天的价格
+    private var sumMap: java.util.HashMap<String, Int>? = null
     private var start: Calendar? = null
     private var end: Calendar? = null
 
@@ -46,6 +50,10 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
 
         mToSelectCalBtn.setOnClickListener {
             startActivity<CaldenlarActivity>()
+        }
+
+        mPopupBtn.setOnClickListener {
+
         }
     }
 
@@ -83,21 +91,42 @@ class MainActivity : AppCompatActivity(), CalendarView.OnCalendarInterceptListen
         val minMonth = mCalendarView.minRangeCalendar.month
         val minDay = mCalendarView.minRangeCalendar.day
 
-//        遍历年月日
-        for (year in minYear..maxYear) {
-            for (month in minMonth..maxMonth) {
-                if (month == minMonth) {
-                    for (day in minDay..maxDay) {
-                        map[getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo!!)).toString()] =
-                                getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo!!))
-                    }
-                } else {
-                    for (day in 1..DateUtil.getMonthDaysCount(year, month)) {
-                        map[getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo!!)).toString()] =
-                                getSchemeCalendar(year, month, day, DateUtil.getPrice(year, month, day, houseInfo!!))
-                    }
-                }
-            }
+        val startTime = Calendar()
+        startTime.year = minYear
+        startTime.month = minMonth
+        startTime.day = minDay
+        val endTime = Calendar()
+        endTime.year = maxYear
+        endTime.month = maxMonth
+        endTime.day = maxDay
+
+        val days = arrayListOf<Calendar>()
+
+        val date1 = Date()
+        date1.time = startTime.timeInMillis
+        val date2 = Date()
+        date2.time = endTime.timeInMillis
+        //当前日期
+        val counter = java.util.Calendar.getInstance()
+        counter.time = date1
+        LogUtils.e("start ${counter.timeInMillis}")
+        val end = java.util.Calendar.getInstance()
+        end.time = date2
+        LogUtils.e("end  ${end.timeInMillis}")
+        while (counter.before(end) || counter == end) {
+            val calendar = Calendar()
+            calendar.year = counter.get(java.util.Calendar.YEAR)
+            calendar.month = counter.get(java.util.Calendar.MONTH) + 1
+            calendar.day = counter.get(java.util.Calendar.DAY_OF_MONTH)
+            days.add(calendar)
+            counter.add(java.util.Calendar.DATE, 1)
+        }
+        sumMap = hashMapOf()
+        for (day in days) {
+            map[getSchemeCalendar(day.year, day.month, day.day, DateUtil.getPrice(day.year, day.month, day.day, houseInfo!!)).toString()] =
+                    getSchemeCalendar(day.year, day.month, day.day, DateUtil.getPrice(day.year, day.month, day.day, houseInfo!!))
+            sumMap!!["${day.year}${day.month}${day.day}"] =
+                    DateUtil.getPrice(day.year, day.month, day.day, houseInfo!!).toInt()
         }
         mCalendarView.setSchemeDate(map)
     }

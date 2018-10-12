@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.FrameLayout
 import com.blankj.utilcode.util.LogUtils
 import com.dan.mycalendardemo.R
+import com.dan.mycalendardemo.entry.Detail
 import com.dan.mycalendardemo.entry.HouseInfo
 import com.dan.mycalendardemo.entry.OrderSummart
 import com.dan.mycalendardemo.utils.DateUtil
@@ -104,6 +105,26 @@ class SelectCalendarView @JvmOverloads constructor(
         return mCalendarView.curDay
     }
 
+    /**
+     * 设置月视图
+     */
+    fun setMonthView(cls: Class<*>) {
+        mCalendarView.setMonthView(cls)
+    }
+
+    /**
+     * 设置多选模式
+     */
+    fun setSelectRangeMode() {
+        mCalendarView.setSelectRangeMode()
+    }
+
+    /**
+     * 设置单选模式
+     */
+    fun setSingleMode() {
+        mCalendarView.setSelectSingleMode()
+    }
 
     /**
      * 设置日历控件的高度
@@ -181,6 +202,20 @@ class SelectCalendarView @JvmOverloads constructor(
                     DateUtil.getPrice(day.year, day.month, day.day, houseInfo).toInt()
         }
         mCalendarView.setSchemeDate(map)
+    }
+
+    fun setPrices(details: MutableList<Detail>?) {
+        details?.let {
+            val map = HashMap<String, Calendar>()
+            for (detail in details) {
+                val year = detail.date.substring(0..3)
+                val month = detail.date.substring(4..5)
+                val day = detail.date.substring(6..7)
+                map[getSchemeCalendar(year.toInt(), month.toInt(), day.toInt(), detail.price.toString()).toString()] =
+                        getSchemeCalendar(year.toInt(), month.toInt(), day.toInt(), detail.price.toString())
+            }
+            mCalendarView.setSchemeDate(map)
+        }
     }
 
     /**

@@ -16,7 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CaldenlarActivity"></activity>
+        <activity android:name=".CaldenlarActivity" />
+        <activity android:name=".PreviewCalendarActivity"></activity>
     </application>
 
 </manifest>
